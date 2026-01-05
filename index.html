@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- CAMBIO 1: Nombre en la pestaña -->
+<title>Feliz Año Nuevo - NATALY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+    overflow: hidden; 
+    font-family: 'Arial', sans-serif; 
+    background-color: #1a1a2e; 
+    transition: background-color 0.1s linear; 
+}
+
+#canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: auto; }
+
+/* --- COLLAGE DE FOTOS (Capa 0) --- */
+.photo-slider-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+    overflow: hidden; pointer-events: none; mix-blend-mode: screen; 
+}
+.photo-track {
+    display: flex; align-items: center; height: 100%; width: max-content;
+    animation: slidePhotos 60s linear infinite; opacity: 0.15; 
+}
+.photo-track img {
+    height: 70vh; width: auto; margin: 0 20px; border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2); filter: grayscale(30%) sepia(20%);
+}
+@keyframes slidePhotos { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* --- AÑO GIGANTE 2026 (OPTIMIZADO) --- */
+.giant-year {
+    position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%);
+    font-family: 'Great Vibes', cursive; font-size: 20vw; color: rgba(255, 255, 255, 0.1); 
+    z-index: 1; opacity: 0; pointer-events: none; transition: opacity 1.5s ease-in-out;
+    white-space: nowrap; will-change: opacity; 
+    text-shadow: 0 0 60px rgba(255, 255, 255, 0.6);
+}
+.giant-year.visible { opacity: 1.7; }
+
+/* --- TEXTOS PRINCIPALES --- */
+.letter {
+    position: absolute; font-size: 160px; /* Un poco más pequeño para que quepan 6 letras */
+    font-weight: 900; font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.45); user-select: none; pointer-events: none;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 255, 255, 0.5);
+    opacity: 0; transition: opacity 0.5s ease; letter-spacing: -0.02em; z-index: 10; will-change: transform;
+}
+
+.elegant-title {
+    position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
+    z-index: 5; opacity: 0; text-align: center; width: 100%; pointer-events: none;
+    animation: fadeInTitle 3s ease-out forwards; animation-delay: 1.5s; 
+}
+.title-text {
+    display: inline-block; font-family: 'Great Vibes', cursive; font-size: 80px; color: #fffdd0;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 255, 255, 0.4);
+    animation: floatTitle 5s ease-in-out infinite;
+    transition: text-shadow 0.5s ease, color 0.5s ease, transform 0.5s ease;
+}
+.title-text.super-glow {
+    color: #ffffff; text-shadow: 0 0 10px #fff, 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 80px #ff8c00;
+    transform: scale(1.05);
+}
+@keyframes fadeInTitle { from { opacity: 0; transform: translate(-50%, 30px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes floatTitle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* --- MENSAJES FLOTANTES --- */
+.floating-message {
+    position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
+    color: #ffffff; text-align: center; width: 250px; pointer-events: none; z-index: 20;
+    opacity: 0; transform: scale(0.5) translateY(20px);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.5);
+}
+.floating-message.visible { opacity: 1; transform: scale(1) translateY(0); }
+.floating-message.hiding { opacity: 0; transform: scale(1.1); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+
+@media (max-width: 768px) {
+    .letter { font-size: 80px; } /* Ajuste para que quepa NATALY en móvil */
+    .title-text { font-size: 50px; } .giant-year { font-size: 30vw; }
+    .elegant-title { top: 12%; } .photo-track img { height: 50vh; margin: 0 10px; }
+    .floating-message { font-size: 12px; width: 160px; }
+}
+
+.scroll-indicator {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.8); font-size: 12px; letter-spacing: 3px; font-weight: bold;
+    animation: pulse 2s ease-in-out infinite; z-index: 5; font-family: 'Montserrat', sans-serif;
+    opacity: 0; animation: fadeInIndicator 2s ease-out forwards 4s, pulse 2s ease-in-out infinite 4s;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    user-select: none; pointer-events: none;
+}
+@keyframes fadeInIndicator { to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+.copyright {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.4); font-size: 10px; letter-spacing: 1px; z-index: 5;
+    opacity: 0; animation: fadeInIndicator 2s ease-out forwards 4.5s;
+    user-select: none; pointer-events: none;
+}
+
+/* --- ESTILOS DEL REPRODUCTOR --- */
+.music-player-container {
+    position: fixed; bottom: 20px; left: 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 100; opacity: 0; animation: fadeInMusicControls 1.5s ease-out forwards; animation-delay: 5s;
+}
+.controls-row { display: flex; gap: 10px; align-items: center; }
+.progress-area {
+    width: 100%; height: 5px; background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px; cursor: pointer; position: relative;
+    transition: height 0.2s ease, background 0.2s ease;
+}
+.progress-area:hover { height: 7px; background: rgba(255, 255, 255, 0.3); }
+.progress-bar {
+    height: 100%; width: 0%; background: rgba(255, 255, 255, 0.9);
+    border-radius: 5px; position: relative;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); transition: width 0.1s linear;
+}
+.glass-btn {
+    background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7);
+    padding: 8px 12px; border-radius: 20px;
+    font-family: 'Montserrat', sans-serif; font-size: 12px;
+    cursor: pointer; user-select: none;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.1s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.glass-btn:hover { background: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.9); }
+.glass-btn:active { transform: scale(0.95); }
+.music-main-btn span { font-size: 16px; line-height: 1; }
+.music-nav-btn { font-size: 14px; padding: 8px 10px; }
+.song-info {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    opacity: 0; animation: fadeInMusicControls 1.5s ease-out forwards; animation-delay: 5s;
+}
+@keyframes fadeInMusicControls { to { opacity: 1; } }
+
+</style>
+</head>
+<body>
+
+<div class="photo-slider-container">
+    <div class="photo-track">
+        <img src="foto1.jpg" alt="Recuerdo">
+        <img src="foto2.jpg" alt="Recuerdo">
+        <img src="foto3.jpg" alt="Recuerdo">
+        <img src="foto4.jpg" alt="Recuerdo">
+        <img src="foto5.jpg" alt="Recuerdo">
+        <img src="foto1.jpg" alt="Recuerdo">
+        <img src="foto2.jpg" alt="Recuerdo">
+        <img src="foto3.jpg" alt="Recuerdo">
+        <img src="foto4.jpg" alt="Recuerdo">
+        <img src="foto5.jpg" alt="Recuerdo">
+    </div>
+</div>
+
+<div id="giantYear" class="giant-year">2026</div>
+
+<canvas id="canvas"></canvas>
+
+<div class="elegant-title">
+    <span id="titleSpan" class="title-text">Feliz Año Nuevo</span>
+</div>
+
+<div class="scroll-indicator">¡Toca la Luna!</div>
+
+<!-- CAMBIO 2: Copyright actualizado -->
+<div class="copyright">ESPECIAL 2026 PARA NATALY. ALL RIGHTS RESERVED.</div>
+
+<audio id="backgroundMusic">
+    <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<div class="music-player-container">
+    <div class="progress-area" id="progressArea">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="controls-row">
+        <div id="prevBtn" class="glass-btn music-nav-btn" title="Anterior">⏮</div>
+        <div id="musicControls" class="glass-btn music-main-btn">
+            <span id="musicIcon">&#9658;</span> <span id="musicText">Música</span>
+        </div>
+        <div id="nextBtn" class="glass-btn music-nav-btn" title="Siguiente">⏭</div>
+    </div>
+</div>
+
+<div id="songInfo" class="song-info glass-btn">
+    <span id="songTitle">Cargando...</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ==========================================
+// LÓGICA DE MENSAJES
+// ==========================================
+// NOTA: Puedes editar estos mensajes para Nataly aquí
+const moonMessages = [
+    "Continúa con tu esencia como hasta ahora",
+    "Que este nuevo año esté lleno de éxitos para ti!",
+    "Estaré a tu lado ayudándote si las cosas van mal",
+    "Sigue el nuevo camino a tu manera",
+    "Tienes lo necesario contigo, es hora de ir por esos logros",
+    "Que Diosito siempre te proteja y cuide",
+    "Eres increíble, continúa como hasta ahora",
+    "Nunca te rindas, la vida es dura pero siempre hallamos la luz",
+    "Los límites están para romperlos! Vamos, tienes todo mi apoyo :)",
+    "Si la vida se pone dura, estoy contigo para ayudarte",
+    "El esfuerzo siempre será recompensado así que sigue adelante!",
+    "Muchas gracias por el tiempo que pasamos juntos",
+    "Reclama este mundo para ti y que este año sea el inicio de una emocionante historia",
+    "No pongas excusas, da lo mejor de ti!! Incluso si es Lunes xd",
+    "Siempre hay nuevas oportunidades, así que no te desanimes"
+];
+
+let availableMessages = [...moonMessages];
+let messageInterval = null;
+let isHoveringForMessages = false;
+let activeMessageElements = []; 
+
+function getRandomMessage() {
+    if (availableMessages.length === 0) availableMessages = [...moonMessages];
+    const randomIndex = Math.floor(Math.random() * availableMessages.length);
+    return availableMessages.splice(randomIndex, 1)[0];
+}
+
+// CAMBIO 3: Ajuste de Zonas Prohibidas para 6 letras (NATALY es más ancho)
+const restrictedZones = [
+    { x: 20, y: 8, w: 60, h: 25 },   // Título
+    // Zonas laterales más amplias para cubrir N A T y A L Y
+    { x: 5, y: 35, w: 35, h: 45 },   // Bloque Izquierdo (NAT)
+    { x: 60, y: 35, w: 35, h: 45 },  // Bloque Derecho (ALY)
+    { x: 42, y: 38, w: 16, h: 25 },  // Luna
+    { x: 30, y: 90, w: 40, h: 10 }   // Footer
+];
+
+function checkCollision(x, y, w, h) {
+    for (let zone of restrictedZones) {
+        if (x < zone.x + zone.w && x + w > zone.x && y < zone.y + zone.h && y + h > zone.y) return true; 
+    }
+    const padding = 3; 
+    for (let msg of activeMessageElements) {
+        const mx = parseFloat(msg.style.left);
+        const my = parseFloat(msg.style.top);
+        const mw = 15; const mh = 10;
+        if (x < mx + mw + padding && x + w > mx - padding && y < my + mh + padding && y + h > my - padding) return true;
+    }
+    return false;
+}
+
+function removeOldestMessage() {
+    if (activeMessageElements.length > 0) {
+        const oldest = activeMessageElements.shift();
+        oldest.classList.remove('visible');
+        oldest.classList.add('hiding');
+        setTimeout(() => { if (oldest.parentNode) oldest.parentNode.removeChild(oldest); }, 800);
+    }
+}
+
+function spawnFloatingMessage() {
+    if (activeMessageElements.length >= 5) removeOldestMessage();
+
+    const msgText = getRandomMessage();
+    const el = document.createElement('div');
+    el.className = 'floating-message';
+    el.textContent = msgText;
+    
+    const msgW = 18; const msgH = 8;  
+    let safeX, safeY; let safe = false; let attempts = 0;
+    
+    while(!safe && attempts < 200) {
+        const randX = 1 + Math.random() * 80; 
+        const randY = 2 + Math.random() * 86;
+        if (!checkCollision(randX, randY, msgW, msgH)) { safeX = randX; safeY = randY; safe = true; }
+        attempts++;
+    }
+    
+    if (!safe) return; 
+
+    el.style.left = safeX + '%'; el.style.top = safeY + '%';
+    document.body.appendChild(el);
+    
+    requestAnimationFrame(() => { requestAnimationFrame(() => { el.classList.add('visible'); }); });
+    activeMessageElements.push(el);
+    
+    setTimeout(() => {
+        if (activeMessageElements.includes(el)) {
+            activeMessageElements = activeMessageElements.filter(e => e !== el);
+            el.classList.remove('visible'); el.classList.add('hiding');
+            setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 800);
+        }
+    }, 5000); 
+}
+
+function startMessageSequence() {
+    if (!isHoveringForMessages) {
+        isHoveringForMessages = true;
+        if (!messageInterval) {
+            spawnFloatingMessage();
+            messageInterval = setInterval(() => { spawnFloatingMessage(); }, 3000); 
+        }
+    }
+}
+
+function stopMessageSequence() {
+    isHoveringForMessages = false;
+    if (messageInterval) { clearInterval(messageInterval); messageInterval = null; }
+}
+
+// ==========================================
+// THREE.JS SCENE
+// ==========================================
+const canvas = document.getElementById('canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+camera.position.z = 5;
+
+let hue = 220;
+
+function isMobileDevice() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768; }
+function isPortrait() { return window.innerHeight > window.innerWidth; }
+
+// CAMBIO 4: Posicionamiento para NATALY (6 letras)
+function positionLetters() {
+    const isMobile = isMobileDevice(); const portrait = isPortrait();
+    document.querySelectorAll('.letter').forEach(el => el.remove());
+    
+    const letters = ['N', 'A', 'T', 'A', 'L', 'Y']; 
+    const letterElements = [];
+    
+    if (isMobile || portrait) {
+        // Móvil: Distribución en 3 filas de 2
+        const positions = [
+            { left: '15%', top: '25%' }, { right: '15%', top: '25%' }, // N A (Arriba)
+            { left: '10%', top: '48%' }, { right: '10%', top: '48%' }, // T A (Medio, separado por luna)
+            { left: '15%', top: '70%' }, { right: '15%', top: '70%' }  // L Y (Abajo)
+        ];
+        letters.forEach((letter, i) => {
+            const div = document.createElement('div'); div.className = 'letter'; div.textContent = letter; div.id = `letter-${i}`;
+            Object.assign(div.style, positions[i]); document.body.appendChild(div); letterElements.push(div);
+        });
+    } else {
+        // PC: Distribución 3 izq, 3 der
+        const positions = [
+            { left: '12%', top: '40%' }, { left: '21%', top: '50%' }, { left: '30%', top: '45%' }, // N A T (Izq)
+            { right: '30%', top: '45%' }, { right: '21%', top: '50%' }, { right: '12%', top: '40%' } // A L Y (Der)
+        ];
+        letters.forEach((letter, i) => {
+            const div = document.createElement('div'); div.className = 'letter'; div.textContent = letter; div.id = `letter-${i}`;
+            Object.assign(div.style, positions[i]); document.body.appendChild(div); letterElements.push(div);
+        });
+    }
+    return letterElements;
+}
+positionLetters();
+
+const mouse = { x: 0, y: 0 };
+const targetMouse = { x: 0, y: 0 };
+
+// --- LUNA ---
+const moonGroup = new THREE.Group();
+moonGroup.visible = false;
+const moonGeometry = new THREE.SphereGeometry(1, 64, 64);
+const moonMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0xffffee, emissiveIntensity: 0.6, shininess: 100, specular: 0xffffff });
+const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+moonGroup.add(moon);
+
+const particlesMoonCount = 900;
+const particlesMoonGeometry = new THREE.BufferGeometry();
+const particlesMoonPositions = [];
+const particlesMoonSizes = [];
+for (let i = 0; i < particlesMoonCount; i++) {
+    const theta = Math.random() * Math.PI * 2; const phi = Math.acos(2 * Math.random() - 1); const radius = 1.02;
+    const x = radius * Math.sin(phi) * Math.cos(theta); const y = radius * Math.sin(phi) * Math.sin(theta); const z = radius * Math.cos(phi);
+    particlesMoonPositions.push(x, y, z); particlesMoonSizes.push(Math.random() * 3 + 1);
+}
+particlesMoonGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particlesMoonPositions, 3));
+particlesMoonGeometry.setAttribute('size', new THREE.Float32BufferAttribute(particlesMoonSizes, 1));
+const particlesMoonMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.03, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+const moonParticles = new THREE.Points(particlesMoonGeometry, particlesMoonMaterial);
+moonGroup.add(moonParticles);
+
+// --- GLOW LUNA ---
+const glowLayers = [];
+function createRadialGradientTexture() {
+    const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 256; const ctx = canvas.getContext('2d');
+    const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.8)');
+    gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.4)'); gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.1)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient; ctx.fillRect(0, 0, 256, 256); const texture = new THREE.Texture(canvas); texture.needsUpdate = true; return texture;
+}
+const glowTexture = createRadialGradientTexture();
+for (let i = 0; i < 3; i++) {
+    const size = 3 + i * 1.5;
+    const spriteMaterial = new THREE.SpriteMaterial({ map: glowTexture, color: 0xffffee, transparent: true, opacity: 0.6 - i * 0.15, blending: THREE.AdditiveBlending, depthWrite: false });
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(size, size, 1); sprite.position.set(0, 0, 0); glowLayers.push(sprite); moonGroup.add(sprite);
+}
+const outerGlowMaterial = new THREE.SpriteMaterial({ map: glowTexture, color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+const outerGlow = new THREE.Sprite(outerGlowMaterial); outerGlow.scale.set(5, 5, 1); moonGroup.add(outerGlow); scene.add(moonGroup);
+
+const flares = [];
+const flareColors = [0xffffff, 0xffffcc, 0xccffff, 0xffccff, 0xffffaa, 0xeeffff];
+for (let i = 0; i < 12; i++) {
+    const flareGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+    const flareMaterial = new THREE.MeshBasicMaterial({ color: flareColors[Math.floor(Math.random() * flareColors.length)], transparent: true, opacity: 0, blending: THREE.AdditiveBlending });
+    const flare = new THREE.Mesh(flareGeometry, flareMaterial);
+    flare.userData = { active: false, life: 0, maxLife: 1, startScale: 0.3, endScale: 2.5 + Math.random() * 1.5, initialOpacity: 0.9, angle: Math.random() * Math.PI * 2, speed: 0.5 + Math.random() * 0.5 };
+    flares.push(flare); scene.add(flare);
+}
+
+let isMouseOverMoon = false; let lastFlareTime = 0; const flareCooldown = 150;
+let moonTargetScale = 1.0; let moonCurrentScale = 1.0; const moonHoverScale = 1.15; const moonScaleSpeed = 0.08;
+
+const pointLight = new THREE.PointLight(0xffffff, 2.5, 100); pointLight.position.set(0, 0, 5); scene.add(pointLight);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); scene.add(ambientLight);
+const fillLight1 = new THREE.DirectionalLight(0xffffff, 0.5); fillLight1.position.set(5, 5, 5); scene.add(fillLight1);
+const fillLight2 = new THREE.DirectionalLight(0xffffff, 0.5); fillLight2.position.set(-5, -5, 5); scene.add(fillLight2);
+
+// ==========================================
+// SISTEMA ÉPICO DE POLVO DE ESTRELLAS
+// ==========================================
+const stardustCount = isMobileDevice() ? 300 : 900;
+const stardustGeometry = new THREE.BufferGeometry();
+const stardustPositions = new Float32Array(stardustCount * 3);
+const stardustColors = new Float32Array(stardustCount * 3);
+const stardustSizes = new Float32Array(stardustCount);
+const stardustData = []; 
+let stardustNextIndex = 0;
+
+for(let i=0; i<stardustCount; i++) {
+    stardustPositions[i*3] = 0; stardustPositions[i*3+1] = 0; stardustPositions[i*3+2] = 0;
+    stardustSizes[i] = 0;
+    stardustColors[i*3] = 1; stardustColors[i*3+1] = 0.9; stardustColors[i*3+2] = 0.5;
+    
+    stardustData.push({ vx: 0, vy: 0, vz: 0, life: 0, maxLife: 1 });
+}
+
+stardustGeometry.setAttribute('position', new THREE.BufferAttribute(stardustPositions, 3));
+stardustGeometry.setAttribute('color', new THREE.BufferAttribute(stardustColors, 3));
+stardustGeometry.setAttribute('size', new THREE.BufferAttribute(stardustSizes, 1));
+
+const stardustMaterial = new THREE.PointsMaterial({
+    size: 0.15,
+    vertexColors: true,
+    map: glowTexture,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    depthTest: false,
+    transparent: true,
+    opacity: 1
+});
+
+const stardustSystem = new THREE.Points(stardustGeometry, stardustMaterial);
+stardustSystem.renderOrder = 2; 
+scene.add(stardustSystem);
+
+function spawnStardust(x, y, z) {
+    for(let j=0; j<4; j++) {
+        const i = stardustNextIndex;
+        stardustData[i].life = 1.0;
+        stardustData[i].maxLife = 0.5 + Math.random() * 0.5;
+        stardustPositions[i*3] = x + (Math.random()-0.5)*0.1;
+        stardustPositions[i*3+1] = y + (Math.random()-0.5)*0.1;
+        stardustPositions[i*3+2] = z; 
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.02 + Math.random() * 0.03;
+        stardustData[i].vx = Math.cos(angle) * speed;
+        stardustData[i].vy = Math.sin(angle) * speed;
+        stardustData[i].vz = (Math.random() - 0.5) * 0.01;
+        stardustColors[i*3] = 1; stardustColors[i*3+1] = 1; stardustColors[i*3+2] = 1;
+        stardustSizes[i] = 0.2 + Math.random() * 0.3;
+        stardustNextIndex = (stardustNextIndex + 1) % stardustCount;
+    }
+}
+
+function updateStardust() {
+    let needsUpdate = false; 
+    for(let i=0; i<stardustCount; i++) {
+        const p = stardustData[i];
+        if(p.life > 0) {
+            needsUpdate = true;
+            p.life -= 0.006; 
+            stardustPositions[i*3] += p.vx; stardustPositions[i*3+1] += p.vy; stardustPositions[i*3+2] += p.vz;
+            p.vx *= 0.95; p.vy *= 0.95; p.vy -= 0.0025; 
+            if(p.life < 0.7) { stardustColors[i*3] = 1; stardustColors[i*3+1] = 0.8; stardustColors[i*3+2] = 0.2; }
+            if(p.life < 0.3) { stardustColors[i*3] = 0.8; stardustColors[i*3+1] = 0.2; stardustColors[i*3+2] = 0.5; }
+            const scale = Math.sin(p.life * Math.PI); 
+            stardustSizes[i] = scale * 0.4;
+        } else {
+            if (stardustSizes[i] > 0) { stardustSizes[i] = 0; stardustPositions[i*3+1] = -1000; needsUpdate = true; }
+        }
+    }
+    if(needsUpdate) {
+        stardustGeometry.attributes.position.needsUpdate = true;
+        stardustGeometry.attributes.color.needsUpdate = true;
+        stardustGeometry.attributes.size.needsUpdate = true;
+    }
+}
+
+// ==========================================
+// SISTEMA DE LLUVIA DE ESTRELLAS
+// ==========================================
+const starfallCount = 300; 
+const starfallGeo = new THREE.BufferGeometry();
+const starfallPos = new Float32Array(starfallCount * 3);
+const starfallCol = new Float32Array(starfallCount * 3);
+const starfallSize = new Float32Array(starfallCount);
+const starfallVel = []; 
+
+for(let i=0; i<starfallCount; i++) {
+    starfallPos[i*3] = (Math.random() - 0.5) * 35; 
+    starfallPos[i*3+1] = (Math.random() - 0.5) * 10; 
+    starfallPos[i*3+2] = -1 + Math.random() * 2;
+    starfallCol[i*3] = 1; starfallCol[i*3+1] = 1; starfallCol[i*3+2] = 1;
+    starfallSize[i] = 0;
+    starfallVel.push({ x: 0, y: 0, speed: 0 });
+}
+
+starfallGeo.setAttribute('position', new THREE.BufferAttribute(starfallPos, 3));
+starfallGeo.setAttribute('color', new THREE.BufferAttribute(starfallCol, 3));
+starfallGeo.setAttribute('size', new THREE.BufferAttribute(starfallSize, 1));
+
+const starfallMat = new THREE.PointsMaterial({
+    size: 0.3, vertexColors: true, map: glowTexture, blending: THREE.AdditiveBlending,
+    depthWrite: false, depthTest: false, transparent: true, opacity: 0
+});
+const starfallSystem = new THREE.Points(starfallGeo, starfallMat);
+scene.add(starfallSystem);
+
+let starfallIntensity = 0; 
+let targetStarfallIntensity = 0; 
+
+function updateStarfall() {
+    starfallIntensity += (targetStarfallIntensity - starfallIntensity) * 0.05;
+    starfallMat.opacity = starfallIntensity;
+    if(starfallIntensity < 0.01) return;
+
+    let needsUpdate = false;
+    for(let i=0; i<starfallCount; i++) {
+        starfallPos[i*3] += starfallVel[i].x; 
+        starfallPos[i*3+1] -= starfallVel[i].speed; 
+        
+        if(starfallPos[i*3+1] < -6) {
+            if(Math.random() < starfallIntensity) {
+                starfallPos[i*3] = (Math.random() - 0.5) * 35; 
+                starfallPos[i*3+1] = 6 + Math.random() * 2; 
+                starfallPos[i*3+2] = -2 + Math.random() * 4; 
+                starfallVel[i].speed = 0.05 + Math.random() * 0.1; 
+                starfallVel[i].x = -0.02 - Math.random() * 0.03; 
+                starfallCol[i*3] = 0.8; starfallCol[i*3+1] = 0.9; starfallCol[i*3+2] = 1.0;
+                starfallSize[i] = 0.2 + Math.random() * 0.3;
+            } else {
+                starfallSize[i] = 0;
+            }
+            needsUpdate = true;
+        } else {
+            if(starfallSize[i] === 0 && starfallIntensity > 0.1 && Math.random() < 0.05) {
+                starfallVel[i].speed = 0.05 + Math.random() * 0.1; 
+                starfallVel[i].x = -0.02 - Math.random() * 0.03; 
+                starfallCol[i*3] = 0.8; starfallCol[i*3+1] = 0.9; starfallCol[i*3+2] = 1.0;
+                starfallSize[i] = 0.2 + Math.random() * 0.3;
+                needsUpdate = true;
+            }
+        }
+        if(starfallSize[i] > 0) needsUpdate = true;
+    }
+    if(needsUpdate) {
+        starfallGeo.attributes.position.needsUpdate = true;
+        starfallGeo.attributes.size.needsUpdate = true;
+        starfallGeo.attributes.color.needsUpdate = true;
+    }
+}
+
+let letterData = [];
+function updateLetterData() {
+    const letters = document.querySelectorAll('.letter');
+    letterData = Array.from(letters).map(letter => ({
+        element: letter,
+        originalX: parseFloat(getComputedStyle(letter).left) || (window.innerWidth - parseFloat(getComputedStyle(letter).right) - letter.offsetWidth),
+        originalY: parseFloat(getComputedStyle(letter).top),
+        currentX: 0, currentY: 0, velocityX: 0, velocityY: 0,
+        floatOffset: Math.random() * Math.PI * 2, floatSpeed: 0.8 + Math.random() * 0.4
+    }));
+}
+updateLetterData();
+
+const timeline = { moonAppearTime: 0.5, lettersAppearTime: 2.5, startTime: Date.now() };
+let moonOpacity = 0; let lettersAnimationStarted = false;
+
+function animateMoonAppearance(currentTime) {
+    const elapsed = (currentTime - timeline.startTime) / 1000;
+    if (elapsed >= timeline.moonAppearTime && !moonGroup.visible) moonGroup.visible = true;
+    if (moonGroup.visible && moonOpacity < 1) {
+        const progress = Math.min((elapsed - timeline.moonAppearTime) / 0.6, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        moonOpacity = easeOut;
+        moonMaterial.opacity = moonOpacity; moonMaterial.transparent = true; particlesMoonMaterial.opacity = 0.8 * moonOpacity;
+        glowLayers.forEach(sprite => { sprite.material.opacity = (0.6 - glowLayers.indexOf(sprite) * 0.15) * moonOpacity; });
+    }
+}
+
+function animateLettersAppearance(currentTime) {
+    const elapsed = (currentTime - timeline.startTime) / 1000;
+    if (elapsed >= timeline.lettersAppearTime && !lettersAnimationStarted) {
+        lettersAnimationStarted = true;
+        document.querySelectorAll('.letter').forEach((letter, index) => {
+            setTimeout(() => {
+                const duration = 1000; const startTime = Date.now();
+                function animateLetter() {
+                    const progress = Math.min((Date.now() - startTime) / duration, 1);
+                    const c1 = 1.70158; const c3 = c1 + 1;
+                    const easeOutBack = 1 + c3 * Math.pow(progress - 1, 3) + c1 * Math.pow(progress - 1, 2);
+                    letter.style.opacity = progress;
+                    const translateY = 50 * (1 - easeOutBack); const scale = 0.8 + (0.2 * easeOutBack);
+                    letter.style.transform = `translate(0, ${translateY}px) scale(${scale})`;
+                    if (progress < 1) requestAnimationFrame(animateLetter); else letter.style.transform = '';
+                }
+                animateLetter();
+            }, index * 150);
+        });
+    }
+}
+
+const titleSpan = document.getElementById('titleSpan');
+const giantYear = document.getElementById('giantYear');
+
+function handleInteraction(clientX, clientY) {
+    targetMouse.x = (clientX / window.innerWidth) * 2 - 1;
+    targetMouse.y = -(clientY / window.innerHeight) * 2 + 1;
+    
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(targetMouse.x, targetMouse.y), camera);
+    const intersects = raycaster.intersectObject(moon);
+    const currentTime = Date.now();
+    
+    if (intersects.length > 0) {
+        if (!isMouseOverMoon) { 
+            isMouseOverMoon = true; 
+            moonTargetScale = moonHoverScale; 
+            titleSpan.classList.add('super-glow');
+            giantYear.classList.add('visible'); 
+            targetStarfallIntensity = 1; 
+            startMessageSequence(); 
+        }
+        if (currentTime - lastFlareTime > flareCooldown) { 
+            triggerFlare(intersects[0].point); 
+            lastFlareTime = currentTime; 
+        }
+    } else {
+        if (isMouseOverMoon) { 
+            isMouseOverMoon = false; 
+            moonTargetScale = 1.0; 
+            titleSpan.classList.remove('super-glow');
+            giantYear.classList.remove('visible');
+            targetStarfallIntensity = 0; 
+            stopMessageSequence(); 
+        }
+    }
+    
+    const vector = new THREE.Vector3(targetMouse.x, targetMouse.y, 0.5);
+    vector.unproject(camera);
+    
+    const dir = vector.sub(camera.position).normalize();
+    const planeZ = 2.0; 
+    const distanceToPlane = (planeZ - camera.position.z) / dir.z;
+    const pos = camera.position.clone().add(dir.multiplyScalar(distanceToPlane));
+    
+    spawnStardust(pos.x, pos.y, pos.z);
+    
+    letterData.forEach(data => {
+        const rect = data.element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = clientX - centerX; const dy = clientY - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy); const maxDistance = 250; 
+        if (distance < maxDistance) {
+            const force = (1 - distance / maxDistance) * 0.5; 
+            data.velocityX += (dx / distance) * force * -1; data.velocityY += (dy / distance) * force * -1;
+        }
+    });
+}
+
+document.addEventListener('mousemove', (e) => handleInteraction(e.clientX, e.clientY));
+document.addEventListener('touchmove', (e) => {
+    if(e.touches.length > 0) {
+        handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
+    }
+}, { passive: true });
+
+function triggerFlare(position) {
+    const flare = flares.find(f => !f.userData.active);
+    if (!flare) return;
+    flare.userData.active = true; flare.userData.life = 0; flare.position.copy(position);
+    flare.scale.set(flare.userData.startScale, flare.userData.startScale, flare.userData.startScale);
+    flare.material.color.setHex(flareColors[Math.floor(Math.random() * flareColors.length)]);
+    flare.material.opacity = flare.userData.initialOpacity; flare.userData.angle = Math.random() * Math.PI * 2;
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    const time = Date.now() * 0.001;
+    const now = Date.now();
+    
+    hue += 0.15; if (hue >= 360) hue = 0;
+    document.body.style.backgroundColor = `hsl(${hue}, 60%, 20%)`;
+    
+    mouse.x += (targetMouse.x - mouse.x) * 0.05; mouse.y += (targetMouse.y - mouse.y) * 0.05;
+    
+    moonCurrentScale += (moonTargetScale - moonCurrentScale) * moonScaleSpeed;
+    moonGroup.scale.set(moonCurrentScale, moonCurrentScale, moonCurrentScale);
+    moonGroup.rotation.y += 0.002; moonGroup.rotation.x = mouse.y * 0.3; moonGroup.rotation.z = mouse.x * 0.1;
+    
+    const positions = moonParticles.geometry.attributes.position.array;
+    for (let i = 0; i < particlesMoonCount; i++) {
+        const i3 = i * 3;
+        const theta = Math.atan2(positions[i3 + 1], positions[i3]);
+        const phi = Math.acos(positions[i3 + 2] / 1.02);
+        const newTheta = theta + 0.0005;
+        const radius = 1.02 + Math.sin(time + i * 0.1) * 0.02;
+        positions[i3] = radius * Math.sin(phi) * Math.cos(newTheta);
+        positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(newTheta);
+        positions[i3 + 2] = radius * Math.cos(phi);
+    }
+    moonParticles.geometry.attributes.position.needsUpdate = true;
+    particlesMoonMaterial.opacity = 0.6 + Math.sin(time * 2) * 0.2;
+    
+    updateStardust();
+    updateStarfall(); 
+    
+    const glowPulse = Math.sin(time * 2) * 0.2;
+    glowLayers.forEach((sprite, index) => {
+        const baseOpacity = 0.5 - index * 0.1;
+        sprite.material.opacity = baseOpacity * (1 + glowPulse);
+        sprite.material.rotation = time * 0.1 * (index + 1) * 0.1;
+    });
+    
+    flares.forEach(flare => {
+        if (flare.userData.active) {
+            flare.userData.life += 0.016;
+            const progress = flare.userData.life / flare.userData.maxLife;
+            if (progress >= 1) { flare.userData.active = false; flare.material.opacity = 0; }
+            else {
+                const scale = flare.userData.startScale + (flare.userData.endScale - flare.userData.startScale) * progress;
+                flare.scale.set(scale, scale, scale);
+                flare.material.opacity = flare.userData.initialOpacity * Math.pow(1 - progress, 2);
+                flare.position.x += Math.cos(flare.userData.angle) * 0.01 * flare.userData.speed;
+                flare.position.y += Math.sin(flare.userData.angle) * 0.01 * flare.userData.speed;
+                flare.rotation.z += 0.02;
+            }
+        }
+    });
+    
+    if (isMouseOverMoon) {
+        moonMaterial.emissiveIntensity = 0.5 + Math.sin(time * 10) * 0.3;
+        const hoverGlowIntensity = 0.7 + Math.sin(time * 5) * 0.3;
+        outerGlow.material.opacity = hoverGlowIntensity;
+        const outerScale = 5 + Math.sin(time * 3) * 0.5; outerGlow.scale.set(outerScale, outerScale, 1);
+        glowLayers.forEach((sprite, index) => {
+            const baseOpacity = 0.7 - index * 0.15;
+            sprite.material.opacity = Math.min(0.9, baseOpacity * (1 + glowPulse * 1.5));
+        });
+    } else {
+        moonMaterial.emissiveIntensity = 0.4; outerGlow.material.opacity *= 0.9;
+        if (outerGlow.material.opacity < 0.01) outerGlow.material.opacity = 0;
+        outerGlow.scale.set(5, 5, 1);
+    }
+    
+    letterData.forEach((data, index) => {
+        data.velocityX *= 0.96; data.velocityY *= 0.96;
+        const returnForceX = -data.currentX * 0.01; const returnForceY = -data.currentY * 0.01;
+        data.velocityX += returnForceX; data.velocityY += returnForceY;
+        data.velocityX = Math.max(-1, Math.min(1, data.velocityX)); data.velocityY = Math.max(-1, Math.min(1, data.velocityY));
+        data.currentX += data.velocityX; data.currentY += data.velocityY;
+        letterData.forEach((otherData, otherIndex) => {
+            if (index !== otherIndex) {
+                const dx = (data.originalX + data.currentX) - (otherData.originalX + otherData.currentX);
+                const dy = (data.originalY + data.currentY) - (otherData.originalY + otherData.currentY);
+                const dist = Math.sqrt(dx*dx + dy*dy); const minDist = 120;
+                if(dist < minDist && dist > 0) {
+                     const repulsion = (minDist - dist) * 0.02; const angle = Math.atan2(dy, dx);
+                     data.velocityX += Math.cos(angle) * repulsion; data.velocityY += Math.sin(angle) * repulsion;
+                }
+            }
+        });
+        const floatX = Math.sin(time * data.floatSpeed + data.floatOffset) * 15;
+        const floatY = Math.cos(time * data.floatSpeed * 0.7 + data.floatOffset) * 20;
+        data.element.style.transform = `translate(${data.currentX + floatX}px, ${data.currentY + floatY}px)`;
+    });
+    
+    animateMoonAppearance(now);
+    animateLettersAppearance(now);
+    
+    renderer.render(scene, camera);
+}
+
+// CORRECCIÓN FINAL: REPARADO EL BUG DE LAS LETRAS DESAPARECIDAS AL REDIMENSIONAR
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    positionLetters(); // Recrea las letras
+    
+    // TRUCO: Forzamos la opacidad a 1 inmediatamente para las nuevas letras
+    // ya que la animación de entrada solo corre una vez al inicio.
+    document.querySelectorAll('.letter').forEach(el => el.style.opacity = 1);
+    
+    updateLetterData(); // Actualiza físicas inmediatamente
+});
+
+animate();
+
+const audioElement = document.getElementById('backgroundMusic');
+const musicControls = document.getElementById('musicControls');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const musicIcon = document.getElementById('musicIcon');
+const musicText = document.getElementById('musicText');
+const songInfo = document.getElementById('songInfo');
+const songTitle = document.getElementById('songTitle');
+const progressArea = document.getElementById('progressArea');
+const progressBar = document.getElementById('progressBar');
+
+const playlist = [
+    { file: "musica1.mp3", title: "Remembering From Dracula (2025) Soundtrack - Danny Elfman" },
+    { file: "musica2.mp3", title: "Tu Mi Poesia - Jesse & Joy" },
+    { file: "musica3.mp3", title: "Opening Titles Bajo la Misma Estrella Score - Mike Mogis And Nathaniel Walcott" },
+    { file: "musica4.mp3", title: "Perfect - Ed Sheeran" },
+    { file: "musica5.mp3", title: "It Will Rain - Bruno Mars" }
+];
+
+let currentSongIndex = 0;
+let isPlaying = false;
+
+function loadSong(index) {
+    audioElement.src = playlist[index].file;
+    songTitle.textContent = playlist[index].title;
+    progressBar.style.width = '0%';
+}
+
+loadSong(currentSongIndex);
+
+musicControls.addEventListener('click', () => {
+    if (isPlaying) {
+        audioElement.pause();
+        musicIcon.innerHTML = '&#9658;';
+        musicText.textContent = 'Música';
+    } else {
+        audioElement.play().catch(error => {
+            console.error("Error al reproducir:", error);
+            alert("Haz clic de nuevo para activar la música :)");
+        });
+        musicIcon.innerHTML = '&#10074;&#10074;';
+        musicText.textContent = 'Pausar';
+    }
+    isPlaying = !isPlaying;
+});
+
+prevBtn.addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+    loadSong(currentSongIndex);
+    if (isPlaying) audioElement.play();
+});
+
+nextBtn.addEventListener('click', () => {
+    currentSongIndex = (currentSongIndex + 1) % playlist.length;
+    loadSong(currentSongIndex);
+    if (isPlaying) audioElement.play();
+});
+
+audioElement.addEventListener('timeupdate', (e) => {
+    const { currentTime, duration } = e.srcElement;
+    if (duration) {
+        const progressPercent = (currentTime / duration) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+    }
+});
+
+progressArea.addEventListener('click', (e) => {
+    const width = progressArea.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audioElement.duration;
+    
+    if (duration) {
+        audioElement.currentTime = (clickX / width) * duration;
+    }
+});
+
+audioElement.addEventListener('ended', () => {
+    currentSongIndex = (currentSongIndex + 1) % playlist.length;
+    loadSong(currentSongIndex);
+    audioElement.play();
+    isPlaying = true;
+    musicIcon.innerHTML = '&#10074;&#10074;';
+    musicText.textContent = 'Pausar';
+});
+
+audioElement.addEventListener('pause', () => { isPlaying = false; musicIcon.innerHTML = '&#9658;'; musicText.textContent = 'Música'; });
+audioElement.addEventListener('play', () => { isPlaying = true; musicIcon.innerHTML = '&#10074;&#10074;'; musicText.textContent = 'Pausar'; });
+audioElement.volume = 0.3;
+
+</script>
+</body>
+</html>
